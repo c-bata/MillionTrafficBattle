@@ -19,63 +19,67 @@ from .models import User, Item, Order
 
 @app.route('/searchOrder')
 def get_order():
+    order_query = Order.query
+
     # senario 1
     date_time_gte = request.args.get('findByOrderDateTimeGTE')
     date_time_lte = request.args.get('findByOrderDateTimeLTE')
     order_user_id = request.args.get('findByOrderUserId')
     order_item_id = request.args.get('findByOrderItemId')
     quantity_gte = request.args.get('findByOrderQuantityGTE')
-    quantity_lted = request.args.get('findByOrderQuantityLTE')
+    quantity_lte = request.args.get('findByOrderQuantityLTE')
     order_state = request.args.get('findByOrderState')
     order_tags_include_all = request.args.get('findByOrderTagsIncludeAll')
     order_tags_include_any = request.args.get('findByOrderTagsIncludeAny')
-    limit = request.args.get('limit')
 
-    order_query = Order.query
-    if date_time_gte:
-        order_query = order_query.filter(Order.order_date_time >= int(date_time_gte))
+    if filter(None, (date_time_gte, date_time_lte, order_user_id,
+                     order_item_id, quantity_gte, quantity_lte, order_state,
+                     order_tags_include_all, order_tags_include_any)):
+        if date_time_gte:
+            order_query = order_query.filter(Order.order_date_time >= int(date_time_gte))
 
-    if date_time_lte:
-        order_query = order_query.filter(Order.order_date_time <= int(date_time_lte))
+        if date_time_lte:
+            order_query = order_query.filter(Order.order_date_time <= int(date_time_lte))
 
-    if order_user_id:
-        order_query = order_query.filter(Order.order_user_id == order_user_id)
+        if order_user_id:
+            order_query = order_query.filter(Order.order_user_id == order_user_id)
 
-    if order_item_id:
-        order_query = order_query.filter(Order.order_item_id == order_item_id)
+        if order_item_id:
+            order_query = order_query.filter(Order.order_item_id == order_item_id)
 
-    if quantity_gte:
-        order_query = order_query.filter(Order.order_quantity >= int(quantity_gte))
+        if quantity_gte:
+            order_query = order_query.filter(Order.order_quantity >= int(quantity_gte))
 
-    if quantity_lted:
-        order_query = order_query.filter(Order.order_quantity <= int(quantity_lted))
+        if quantity_lte:
+            order_query = order_query.filter(Order.order_quantity <= int(quantity_lte))
 
-    if order_state:
-        order_query = order_query.filter(Order.order_state == order_state)
+        if order_state:
+            order_query = order_query.filter(Order.order_state == order_state)
 
-    if order_tags_include_all:
-        like_tags = [Order.tags.like('%' + tag + '%') for tag in order_tags_include_all.split(',')]
-        order_query = order_query.filter(*like_tags)
+        if order_tags_include_all:
+            like_tags = [Order.tags.like('%' + tag + '%') for tag in order_tags_include_all.split(',')]
+            order_query = order_query.filter(*like_tags)
 
-    if order_tags_include_any:
-        like_tags = [Order.tags.like('%' + tag + '%') for tag in order_tags_include_any.split(',')]
-        order_query = order_query.filter(or_(*like_tags))
+        if order_tags_include_any:
+            like_tags = [Order.tags.like('%' + tag + '%') for tag in order_tags_include_any.split(',')]
+            order_query = order_query.filter(or_(*like_tags))
 
     # senario 2
     user_company = request.args.get('findByUserCompany')
     discount_rate_gte = request.args.get('findByDisCountRateGTE')
     discount_rate_lte = request.args.get('findByDisCountRateLTE')
 
-    #order_query = order_query.join(User)
+    if filter(None, (user_company, discount_rate_lte, discount_rate_gte)):
+        order_query = order_query.join(User)
 
-    if user_company:
-        order_query = order_query.filter(User.user_company == user_company)
+        if user_company:
+            order_query = order_query.filter(User.user_company == user_company)
 
-    if discount_rate_gte:
-        order_query = order_query.filter(User.user_discount_rate >= int(discount_rate_gte))
+        if discount_rate_gte:
+            order_query = order_query.filter(User.user_discount_rate >= int(discount_rate_gte))
 
-    if discount_rate_lte:
-        order_query = order_query.filter(User.user_discount_rate <= int(discount_rate_lte))
+        if discount_rate_lte:
+            order_query = order_query.filter(User.user_discount_rate <= int(discount_rate_lte))
 
     # senario 3
     item_supplier = request.args.get('findByItemSupplier')
@@ -86,31 +90,36 @@ def get_order():
     item_tags_include_all = request.args.get('findByItemTagsIncludeAll')
     item_tags_include_any = request.args.get('findByItemTagsIncludeAny')
 
-    #order_query = order_query.join(Item)
+    if filter(None, (item_supplier, item_stock_quantity_gte,
+                     item_stock_quantity_lte, item_base_price_gte,
+                     item_stock_quantity_lte, item_tags_include_all,
+                     item_tags_include_any)):
+        order_query = order_query.join(Item)
 
-    if item_supplier:
-        order_query = order_query.filter(Item.item_supplier == item_supplier)
+        if item_supplier:
+            order_query = order_query.filter(Item.item_supplier == item_supplier)
 
-    if item_stock_quantity_gte:
-        order_query = order_query.filter(Item.item_stock_quantity >= int(item_stock_quantity_gte))
+        if item_stock_quantity_gte:
+            order_query = order_query.filter(Item.item_stock_quantity >= int(item_stock_quantity_gte))
 
-    if item_stock_quantity_lte:
-        order_query = order_query.filter(Item.item_stock_quantity <= int(item_stock_quantity_lte))
+        if item_stock_quantity_lte:
+            order_query = order_query.filter(Item.item_stock_quantity <= int(item_stock_quantity_lte))
 
-    if item_base_price_gte:
-        order_query = order_query.filter(Item.item_base_price >= int(item_base_price_gte))
+        if item_base_price_gte:
+            order_query = order_query.filter(Item.item_base_price >= int(item_base_price_gte))
 
-    if item_base_price_lte:
-        order_query = order_query.filter(Item.item_base_price <= int(item_base_price_lte))
+        if item_base_price_lte:
+            order_query = order_query.filter(Item.item_base_price <= int(item_base_price_lte))
 
-    if item_tags_include_all:
-        like_tags = [Item.tags.like('%' + tag + '%') for tag in item_tags_include_all.split(',')]
-        order_query = order_query.filter(*like_tags)
+        if item_tags_include_all:
+            like_tags = [Item.tags.like('%' + tag + '%') for tag in item_tags_include_all.split(',')]
+            order_query = order_query.filter(*like_tags)
 
-    if item_tags_include_any:
-        like_tags = [Item.tags.like('%' + tag + '%') for tag in item_tags_include_any.split(',')]
-        order_query = order_query.filter(or_(*like_tags))
+        if item_tags_include_any:
+            like_tags = [Item.tags.like('%' + tag + '%') for tag in item_tags_include_any.split(',')]
+            order_query = order_query.filter(or_(*like_tags))
 
+    limit = request.args.get('limit')
     if limit:
         order_query = order_query.limit(int(limit))
 
