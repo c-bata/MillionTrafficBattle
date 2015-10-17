@@ -2,7 +2,7 @@ from flask import jsonify, current_app, request
 from flask.ext.sqlalchemy import get_debug_queries
 
 from . import app, db
-from .models import User, Item, Order, ItemTag, OrderTag
+from .models import User, Item, Order
 
 
 @app.after_request

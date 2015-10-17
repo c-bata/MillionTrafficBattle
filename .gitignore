@@ -26,3 +26,5 @@ coverage.xml
 ## SQLite
 db.sqlite3
 db.sqlite3-journal
+db-with-tags.sqlite3
+sample_data

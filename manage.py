@@ -2,7 +2,7 @@ from flask.ext.script import Manager
 from flask.ext.migrate import MigrateCommand
 
 from flask_api import app, db
-from flask_api.models import User, Item, Order, ItemTag, OrderTag
+from flask_api.models import User, Item, Order
 
 
 manager = Manager(app)
