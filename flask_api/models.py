@@ -1,30 +1,19 @@
 from . import db
-from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class User(db.Model):
     __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128), index=True)
-    password_hash = db.Column(db.String(128))
-
-    @property
-    def password(self):
-        raise AttributeError('password is not a readable attribute')
-
-    @password.setter
-    def password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def verify_password(self, password):
-        return check_password_hash(self.password_hash, password)
+    id = db.Column(db.String(16), primary_key=True)
+    user_company = db.Column(db.String(128), index=True)
+    user_discount_rate = db.Column(db.SmallInteger())
 
     def __repr__(self):
-        return '<User %r>' % self.name
+        return '<User %r>' % self.user_company
 
     @property
     def serialize(self):
         return {
             'id': self.id,
-            'name': self.name,
+            'user_company': self.user_company,
+            'user_discount_rate': self.user_discount_rate
         }
