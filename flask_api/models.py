@@ -125,3 +125,14 @@ class Order(db.Model):
         self.order_quantity = order_quantty
         self.order_state = order_state
 
+    @property
+    def serialize(self):
+        return {
+            'orderId': self.id,
+            'orderDateTime': self.order_date_time,
+            'orderUserId': self.order_user_id,
+            'orderItemId': self.order_item_id,
+            'orderQuantity': self.order_quantity,
+            'orderState': self.order_state,
+            'tags': [tag.name for tag in self.tags]
+        }
