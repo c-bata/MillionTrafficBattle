@@ -33,11 +33,12 @@ def init():
 
     for row in tsv:
         item = Item(row[0], row[1], row[2], row[3])
-        db.session.add(item)
 
         for tag_name in row[4].split(','):
             tag = Tag.get_or_create(tag_name)
             tag.items.append(item)
+            db.session.add(tag)
+        db.session.add(item)
     db.session.commit()
 
     # order.tsv
@@ -47,13 +48,15 @@ def init():
 
     for i, row in enumerate(tsv):
         order = Order(row[0], row[1], row[2], row[3], row[4], row[5])
-        db.session.add(order)
 
         for tag_name in row[6].split(','):
             tag = Tag.get_or_create(tag_name)
             tag.orders.append(order)
+            db.session.add(tag)
+
         if i % 10000:
             db.session.commit()
+        db.session.add(order)
     db.session.commit()
 
 
