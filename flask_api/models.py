@@ -70,5 +70,5 @@ class Order(db.Model):
             'orderItemId': self.order_item_id,
             'orderQuantity': self.order_quantity,
             'orderState': self.order_state,
-            'tags': [tag.name for tag in self.tags]
+            'tags': [tag.name for tag in self.tags.split(',')]
         }
