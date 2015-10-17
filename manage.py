@@ -37,7 +37,7 @@ def init():
 
         for tag_name in row[4].split(','):
             tag = Tag.get_or_create(tag_name)
-            tag.items.append(item.id)
+            tag.items.append(item)
     db.session.commit()
 
     # order.tsv
@@ -51,7 +51,7 @@ def init():
 
         for tag_name in row[6].split(','):
             tag = Tag.get_or_create(tag_name)
-            tag.orders.append(order.id)
+            tag.orders.append(order)
         if i % 10000:
             db.session.commit()
     db.session.commit()

@@ -74,7 +74,7 @@ class Tag(db.Model):
 
     @classmethod
     def get_or_create(cls, tag_name):
-        tag = cls.query.filter(name=tag_name).first()
+        tag = cls.query.filter_by(name=tag_name).first()
         if tag:
             return tag
         else:
