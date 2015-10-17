@@ -54,9 +54,9 @@ def init():
             tag.orders.append(order)
             db.session.add(tag)
 
-        if i % 10000:
+        if not i % 10000:
             db.session.commit()
-            print('order_id: %d is done' & i)
+            print('order_id: %d is done' % i)
         db.session.add(order)
     db.session.commit()
 
