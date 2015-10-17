@@ -28,6 +28,7 @@ def get_order():
     findByOrderState = request.args.get('findByOrderState')
     findByOrderTagsIncludeAll = request.args.get('findByOrderTagsIncludeAll')
     findByOrderTagsIncludeAny = request.args.get('findByOrderTagsIncludeAny')
+    limit = request.args.get('limit')
 
     order_query = Order.query
     if findByOrderDateTimeGTE:
@@ -58,6 +59,9 @@ def get_order():
     if findByOrderTagsIncludeAny:
         like_tags = [Order.tags.like('%' + tag + '%') for tag in findByOrderTagsIncludeAny.split(',')]
         order_query = order_query.filter(or_(*like_tags))
+
+    if limit:
+        order_query = order_query.limit(int(limit))
 
     orders = order_query.all()
     return jsonify(result=(len(orders) != 0),
