@@ -1,5 +1,6 @@
 from flask import jsonify, current_app, request
 from flask.ext.sqlalchemy import get_debug_queries
+from sqlalchemy import or_
 
 from . import app, db
 from .models import User, Item, Order
@@ -51,10 +52,12 @@ def get_order():
         order_query = order_query.filter(Order.order_state == findByOrderState)
 
     if findByOrderTagsIncludeAll:
-        pass
+        like_tags = [Order.tags.like('%' + tag + '%') for tag in findByOrderTagsIncludeAll.split(',')]
+        order_query = order_query.filter(*like_tags)
 
     if findByOrderTagsIncludeAny:
-        pass
+        like_tags = [Order.tags.like('%' + tag + '%') for tag in findByOrderTagsIncludeAny.split(',')]
+        order_query = order_query.filter(or_(*like_tags))
 
     orders = order_query.all()
     return jsonify(result=(len(orders) != 0),
