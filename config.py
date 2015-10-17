@@ -5,7 +5,8 @@ DATA_DIR = os.path.join(os.path.dirname(BASE_DIR), 'sample_data/')
 
 # database
 DEBUG = True
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
+#SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
+SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://mtb1:mtbpass1@localhost/mtb'
 
 SLOW_DB_QUERY_TIME = 0.5
 
