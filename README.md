@@ -41,3 +41,26 @@ shell
 ## Tips
 
 - Blueprint: http://qiita.com/Alice1017/items/a6b6500e60f2a0334e44
+
+# Implementation
+
+## User authentication
+
+```
+>>> from flask_api.models import User
+>>> u = User()
+>>> u.password='cat'
+>>> u.password
+Traceback (most recent call last):
+  File "<console>", line 1, in <module>
+  File "/Users/masashi/PycharmProjects/million_traffic_battle/flask_api/models.py", line 13, in password
+    raise AttributeError('password is not a readable attribute')
+AttributeError: password is not a readable attribute
+>>> u.password_hash
+'pbkdf2:sha1:1000$pjsh7cVO$33e723c78dfe39b49ade0c7b5db8f034bdd6d31e'
+>>> u.verify_password('cat')
+True
+>>> u.verify_password('cats')
+False
+```
+
