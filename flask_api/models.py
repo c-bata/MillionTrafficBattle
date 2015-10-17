@@ -4,14 +4,14 @@ from . import db
 item_tags = db.Table(
     'item_tags',
     db.Column('item_id', db.String(16), db.ForeignKey('items.id')),
-    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'))
+    db.Column('itemtag_id', db.Integer, db.ForeignKey('itemtags.id'))
 )
 
 
 order_tags = db.Table(
     'order_tags',
     db.Column('order_id', db.String(16), db.ForeignKey('orders.id')),
-    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'))
+    db.Column('ordertag_id', db.Integer, db.ForeignKey('ordertags.id'))
 )
 
 
@@ -47,7 +47,7 @@ class Item(db.Model):
     item_stock_quantity = db.Column(db.Integer(), index=True)
     item_base_price = db.Column(db.Integer(), index=True)
     orders = db.relationship('Order', backref='item', lazy='dynamic')
-    tags = db.relationship('Tag', secondary=item_tags,
+    tags = db.relationship('ItemTag', secondary=item_tags,
                            backref=db.backref('items'))
 
     def __repr__(self):
@@ -61,13 +61,33 @@ class Item(db.Model):
         self.item_base_price = item_base_price
 
 
-class Tag(db.Model):
-    __tablename__ = 'tags'
+class ItemTag(db.Model):
+    __tablename__ = 'itemtags'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), index=True, nullable=True)
 
     def __repr__(self):
-        return '<Tag %r>' % self.name
+        return '<ItemTag %r>' % self.name
+
+    def __init__(self, name):
+        self.name = name
+
+    @classmethod
+    def get_or_create(cls, tag_name):
+        tag = cls.query.filter_by(name=tag_name).first()
+        if tag:
+            return tag
+        else:
+            return cls(tag_name)
+
+
+class OrderTag(db.Model):
+    __tablename__ = 'ordertags'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), index=True, nullable=True)
+
+    def __repr__(self):
+        return '<OrderTag %r>' % self.name
 
     def __init__(self, name):
         self.name = name
@@ -84,12 +104,12 @@ class Tag(db.Model):
 class Order(db.Model):
     __tablename__ = 'orders'
     id = db.Column(db.String(16), primary_key=True)
-    order_date_time = db.Column(db.DateTime())
+    order_date_time = db.Column(db.Integer(), index=True)
     order_user_id = db.Column(db.String(16), db.ForeignKey('users.id'))
     order_item_id = db.Column(db.String(16), db.ForeignKey('items.id'))
-    order_quantity = db.Column(db.Integer())
+    order_quantity = db.Column(db.Integer(), index=True)
     order_state = db.Column(db.String(), index=True)
-    tags = db.relationship('Tag', secondary=order_tags,
+    tags = db.relationship('OrderTag', secondary=order_tags,
                            backref=db.backref('orders'))
 
     def __repr__(self):
@@ -104,3 +124,4 @@ class Order(db.Model):
         self.order_item_id = order_item_id
         self.order_quantity = order_quantty
         self.order_state = order_state
+

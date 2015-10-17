@@ -2,7 +2,7 @@ from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.migrate import Migrate
 
-db = SQLAlchemy()
+db = SQLAlchemy(session_options={'autoflush': False})
 
 app = Flask(__name__)
 app.config.from_object('config')

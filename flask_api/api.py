@@ -2,7 +2,7 @@ from flask import jsonify, current_app
 from flask.ext.sqlalchemy import get_debug_queries
 
 from . import app, db
-from .models import User, Item, Order, Tag
+from .models import User, Item, Order, ItemTag, OrderTag
 
 
 @app.after_request
@@ -25,3 +25,4 @@ def get_order():
 def users():
     users = User.query.all()
     return jsonify(Users=[u.serialize for u in users])
+

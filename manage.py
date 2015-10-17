@@ -2,7 +2,7 @@ from flask.ext.script import Manager
 from flask.ext.migrate import MigrateCommand
 
 from flask_api import app, db
-from flask_api.models import User, Item, Order, Tag
+from flask_api.models import User, Item, Order, ItemTag, OrderTag
 
 
 manager = Manager(app)
@@ -35,7 +35,7 @@ def init():
         item = Item(row[0], row[1], row[2], row[3])
 
         for tag_name in row[4].split(','):
-            tag = Tag.get_or_create(tag_name)
+            tag = ItemTag.get_or_create(tag_name)
             tag.items.append(item)
             db.session.add(tag)
         db.session.add(item)
@@ -50,12 +50,13 @@ def init():
         order = Order(row[0], row[1], row[2], row[3], row[4], row[5])
 
         for tag_name in row[6].split(','):
-            tag = Tag.get_or_create(tag_name)
+            tag = OrderTag.get_or_create(tag_name)
             tag.orders.append(order)
             db.session.add(tag)
 
         if i % 10000:
             db.session.commit()
+            print('order_id: %d is done' & i)
         db.session.add(order)
     db.session.commit()
 
