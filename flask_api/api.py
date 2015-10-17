@@ -27,8 +27,8 @@ def get_order():
     quantity_gte = request.args.get('findByOrderQuantityGTE')
     quantity_lted = request.args.get('findByOrderQuantityLTE')
     order_state = request.args.get('findByOrderState')
-    tags_include_all = request.args.get('findByOrderTagsIncludeAll')
-    tags_include_any = request.args.get('findByOrderTagsIncludeAny')
+    order_tags_include_all = request.args.get('findByOrderTagsIncludeAll')
+    order_tags_include_any = request.args.get('findByOrderTagsIncludeAny')
     limit = request.args.get('limit')
 
     order_query = Order.query
@@ -53,12 +53,12 @@ def get_order():
     if order_state:
         order_query = order_query.filter(Order.order_state == order_state)
 
-    if tags_include_all:
-        like_tags = [Order.tags.like('%' + tag + '%') for tag in tags_include_all.split(',')]
+    if order_tags_include_all:
+        like_tags = [Order.tags.like('%' + tag + '%') for tag in order_tags_include_all.split(',')]
         order_query = order_query.filter(*like_tags)
 
-    if tags_include_any:
-        like_tags = [Order.tags.like('%' + tag + '%') for tag in tags_include_any.split(',')]
+    if order_tags_include_any:
+        like_tags = [Order.tags.like('%' + tag + '%') for tag in order_tags_include_any.split(',')]
         order_query = order_query.filter(or_(*like_tags))
 
     # senario 2
