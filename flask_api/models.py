@@ -72,6 +72,14 @@ class Tag(db.Model):
     def __init__(self, name):
         self.name = name
 
+    @classmethod
+    def get_or_create(cls, tag_name):
+        tag = cls.query.filter(name=tag_name).first()
+        if tag:
+            return tag
+        else:
+            return cls(tag_name)
+
 
 class Order(db.Model):
     __tablename__ = 'orders'

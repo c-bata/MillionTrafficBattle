@@ -1,4 +1,3 @@
-from flask_api import app
 from flask.ext.script import Manager
 from flask.ext.migrate import MigrateCommand
 
@@ -35,6 +34,10 @@ def init():
     for row in tsv:
         item = Item(row[0], row[1], row[2], row[3])
         db.session.add(item)
+
+        for tag_name in row[4].split(','):
+            tag = Tag.get_or_create(tag_name)
+            tag.items.append(item.id)
     db.session.commit()
 
     # order.tsv
@@ -42,9 +45,15 @@ def init():
     tsv = csv.reader(f, delimiter='\t')
     print(tsv.__next__())
 
-    for row in tsv:
+    for i, row in enumerate(tsv):
         order = Order(row[0], row[1], row[2], row[3], row[4], row[5])
         db.session.add(order)
+
+        for tag_name in row[6].split(','):
+            tag = Tag.get_or_create(tag_name)
+            tag.orders.append(order.id)
+        if i % 10000:
+            db.session.commit()
     db.session.commit()
 
 
