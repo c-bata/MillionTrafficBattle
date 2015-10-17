@@ -108,7 +108,7 @@ class Order(db.Model):
     order_user_id = db.Column(db.String(16), db.ForeignKey('users.id'))
     order_item_id = db.Column(db.String(16), db.ForeignKey('items.id'))
     order_quantity = db.Column(db.Integer(), index=True)
-    order_state = db.Column(db.String(), index=True)
+    order_state = db.Column(db.String(128), index=True)
     tags = db.relationship('OrderTag', secondary=order_tags,
                            backref=db.backref('orders'))
 
