@@ -72,10 +72,44 @@ def get_order():
         order_query = order_query.filter(User.user_company == user_company)
 
     if discount_rate_gte:
-        order_query = order_query.filter(User.user_discount_rate >= discount_rate_gte)
+        order_query = order_query.filter(User.user_discount_rate >= int(discount_rate_gte))
 
     if discount_rate_lte:
-        order_query = order_query.filter(User.user_discount_rate <= discount_rate_lte)
+        order_query = order_query.filter(User.user_discount_rate <= int(discount_rate_lte))
+
+    # senario 3
+    item_supplier = request.args.get('findByItemSupplier')
+    item_stock_quantity_gte = request.args.get('findByItemStockQuantityGTE')
+    item_stock_quantity_lte = request.args.get('findByItemStockQuantityLTE')
+    item_base_price_gte = request.args.get('findByItemBasePriceGTE')
+    item_base_price_lte = request.args.get('findByItemBasePriceLTE')
+    item_tags_include_all = request.args.get('findByItemTagsIncludeAll')
+    item_tags_include_any = request.args.get('findByItemTagsIncludeAny')
+
+    #order_query = order_query.join(Item)
+
+    if item_supplier:
+        order_query = order_query.filter(Item.item_supplier == item_supplier)
+
+    if item_stock_quantity_gte:
+        order_query = order_query.filter(Item.item_stock_quantity >= int(item_stock_quantity_gte))
+
+    if item_stock_quantity_lte:
+        order_query = order_query.filter(Item.item_stock_quantity <= int(item_stock_quantity_lte))
+
+    if item_base_price_gte:
+        order_query = order_query.filter(Item.item_base_price >= int(item_base_price_gte))
+
+    if item_base_price_lte:
+        order_query = order_query.filter(Item.item_base_price <= int(item_base_price_lte))
+
+    if item_tags_include_all:
+        like_tags = [Item.tags.like('%' + tag + '%') for tag in item_tags_include_all.split(',')]
+        order_query = order_query.filter(*like_tags)
+
+    if item_tags_include_any:
+        like_tags = [Item.tags.like('%' + tag + '%') for tag in item_tags_include_any.split(',')]
+        order_query = order_query.filter(or_(*like_tags))
 
     if limit:
         order_query = order_query.limit(int(limit))
