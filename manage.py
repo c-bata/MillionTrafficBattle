@@ -9,6 +9,7 @@ manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
 
+"""
 @manager.command
 def init():
     import csv
@@ -59,6 +60,7 @@ def init():
             print('order_id: %d is done' % i)
         db.session.add(order)
     db.session.commit()
+"""
 
 
 @manager.command
