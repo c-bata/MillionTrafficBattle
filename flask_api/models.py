@@ -10,6 +10,12 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % self.user_company
 
+    def __init__(self, id, user_company, user_discount_rate):
+        """ Initializes the fields with entered data """
+        self.id = id
+        self.user_company = user_company
+        self.user_discount_rate = user_discount_rate
+
     @property
     def serialize(self):
         return {

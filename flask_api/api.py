@@ -21,6 +21,18 @@ def get_order():
     return jsonify(Users=['wei', 'hai', 'dkjfk'])
 
 
+@app.route('/initialize')
+def initialize():
+    import csv
+    f = open(current_app.config['DATA_DIR'] + 'user.tsv')
+    tsv = csv.reader(f, delimiter='\t')
+
+    for row in tsv:
+        user = User(row[0], row[1], row[2])
+        db.session.add(user)
+    db.session.commit()
+
+
 @app.route('/')
 def users():
     users = User.query.all()
