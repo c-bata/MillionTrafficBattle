@@ -27,10 +27,17 @@ def initialize():
     f = open(current_app.config['DATA_DIR'] + 'user.tsv')
     tsv = csv.reader(f, delimiter='\t')
 
-    for row in tsv:
+    db.drop_all()
+    db.create_all()
+
+    for i, row in enumerate(tsv):
+        if (i == 0):
+            continue
         user = User(row[0], row[1], row[2])
         db.session.add(user)
     db.session.commit()
+
+    return 'Success'
 
 
 @app.route('/')
