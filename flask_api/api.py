@@ -19,6 +19,7 @@ from .models import User, Item, Order
 
 @app.route('/searchOrder')
 def get_order():
+    # senario 1
     date_time_gte = request.args.get('findByOrderDateTimeGTE')
     date_time_lte = request.args.get('findByOrderDateTimeLTE')
     order_user_id = request.args.get('findByOrderUserId')
@@ -59,6 +60,22 @@ def get_order():
     if tags_include_any:
         like_tags = [Order.tags.like('%' + tag + '%') for tag in tags_include_any.split(',')]
         order_query = order_query.filter(or_(*like_tags))
+
+    # senario 2
+    user_company = request.args.get('findByUserCompany')
+    discount_rate_gte = request.args.get('findByDisCountRateGTE')
+    discount_rate_lte = request.args.get('findByDisCountRateLTE')
+
+    #order_query = order_query.join(User)
+
+    if user_company:
+        order_query = order_query.filter(User.user_company == user_company)
+
+    if discount_rate_gte:
+        order_query = order_query.filter(User.user_discount_rate >= discount_rate_gte)
+
+    if discount_rate_lte:
+        order_query = order_query.filter(User.user_discount_rate <= discount_rate_lte)
 
     if limit:
         order_query = order_query.limit(int(limit))
