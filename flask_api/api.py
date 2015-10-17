@@ -19,45 +19,45 @@ from .models import User, Item, Order
 
 @app.route('/searchOrder')
 def get_order():
-    findByOrderDateTimeGTE = request.args.get('findByOrderDateTimeGTE')
-    findByOrderDateTimeLTE = request.args.get('findByOrderDateTimeLTE')
-    findByOrderUserId = request.args.get('findByOrderUserId')
-    findByOrderItemId = request.args.get('findByOrderItemId')
-    findByOrderQuantityGTE = request.args.get('findByOrderQuantityGTE')
-    findByOrderQuantityLTE = request.args.get('findByOrderQuantityLTE')
-    findByOrderState = request.args.get('findByOrderState')
-    findByOrderTagsIncludeAll = request.args.get('findByOrderTagsIncludeAll')
-    findByOrderTagsIncludeAny = request.args.get('findByOrderTagsIncludeAny')
+    date_time_gte = request.args.get('findByOrderDateTimeGTE')
+    date_time_lte = request.args.get('findByOrderDateTimeLTE')
+    order_user_id = request.args.get('findByOrderUserId')
+    order_item_id = request.args.get('findByOrderItemId')
+    quantity_gte = request.args.get('findByOrderQuantityGTE')
+    quantity_lted = request.args.get('findByOrderQuantityLTE')
+    order_state = request.args.get('findByOrderState')
+    tags_include_all = request.args.get('findByOrderTagsIncludeAll')
+    tags_include_any = request.args.get('findByOrderTagsIncludeAny')
     limit = request.args.get('limit')
 
     order_query = Order.query
-    if findByOrderDateTimeGTE:
-        order_query = order_query.filter(Order.order_date_time >= int(findByOrderDateTimeGTE))
+    if date_time_gte:
+        order_query = order_query.filter(Order.order_date_time >= int(date_time_gte))
 
-    if findByOrderDateTimeLTE:
-        order_query = order_query.filter(Order.order_date_time <= int(findByOrderDateTimeGTE))
+    if date_time_lte:
+        order_query = order_query.filter(Order.order_date_time <= int(date_time_lte))
 
-    if findByOrderUserId:
-        order_query = order_query.filter(Order.order_user_id == findByOrderUserId)
+    if order_user_id:
+        order_query = order_query.filter(Order.order_user_id == order_user_id)
 
-    if findByOrderItemId:
-        order_query = order_query.filter(Order.order_item_id == findByOrderItemId)
+    if order_item_id:
+        order_query = order_query.filter(Order.order_item_id == order_item_id)
 
-    if findByOrderQuantityGTE:
-        order_query = order_query.filter(Order.order_quantity >= int(findByOrderQuantityGTE))
+    if quantity_gte:
+        order_query = order_query.filter(Order.order_quantity >= int(quantity_gte))
 
-    if findByOrderQuantityLTE:
-        order_query = order_query.filter(Order.order_quantity <= int(findByOrderQuantityLTE))
+    if quantity_lted:
+        order_query = order_query.filter(Order.order_quantity <= int(quantity_lted))
 
-    if findByOrderState:
-        order_query = order_query.filter(Order.order_state == findByOrderState)
+    if order_state:
+        order_query = order_query.filter(Order.order_state == order_state)
 
-    if findByOrderTagsIncludeAll:
-        like_tags = [Order.tags.like('%' + tag + '%') for tag in findByOrderTagsIncludeAll.split(',')]
+    if tags_include_all:
+        like_tags = [Order.tags.like('%' + tag + '%') for tag in tags_include_all.split(',')]
         order_query = order_query.filter(*like_tags)
 
-    if findByOrderTagsIncludeAny:
-        like_tags = [Order.tags.like('%' + tag + '%') for tag in findByOrderTagsIncludeAny.split(',')]
+    if tags_include_any:
+        like_tags = [Order.tags.like('%' + tag + '%') for tag in tags_include_any.split(',')]
         order_query = order_query.filter(or_(*like_tags))
 
     if limit:
