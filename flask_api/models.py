@@ -44,7 +44,7 @@ class Item(db.Model):
     __tablename__ = 'items'
     id = db.Column(db.String(16), primary_key=True)
     item_supplier = db.Column(db.String(128), index=True)
-    item_stock_quntity = db.Column(db.Integer(), index=True)
+    item_stock_quantity = db.Column(db.Integer(), index=True)
     item_base_price = db.Column(db.Integer(), index=True)
     orders = db.relationship('Order', backref='item', lazy='dynamic')
     tags = db.relationship('Tag', secondary=item_tags,
@@ -57,7 +57,7 @@ class Item(db.Model):
         """ Initializes the fields with entered data """
         self.id = id
         self.item_supplier = item_supplier
-        self.item_stock_quntity = item_stock_quantity
+        self.item_stock_quantity = item_stock_quantity
         self.item_base_price = item_base_price
 
 
