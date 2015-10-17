@@ -11,6 +11,9 @@ $ python manage.py db migrate
 $ python manage.py db upgrade
 ```
 
+upgradeしてもそのままじゃ使えなかった。configの設定が間違ってたぽい。
+`manage.py shell` から `db.create_all()` すると違うところにdb.sqlite3が出来て気づけた。
+
 
 ## Flask-Script
 
