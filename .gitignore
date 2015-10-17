@@ -22,3 +22,6 @@ coverage.xml
 
 ## Directory-based project format:
 .idea/
+
+## SQLite
+db.sqlite3

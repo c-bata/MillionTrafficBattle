@@ -1,12 +1,16 @@
 from flask import Flask
+from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.migrate import Migrate
+
+db = SQLAlchemy()
 
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object('config')
 
-    from .models import db
     db.init_app(app)
+    migrate = Migrate(app, db)
 
     from .api import app as api_blueprint
     app.register_blueprint(api_blueprint, url_prefix='/')
