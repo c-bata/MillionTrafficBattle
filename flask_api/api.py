@@ -111,7 +111,9 @@ def get_order():
     item_tags_include_all = request.args.get('findByItemTagsIncludeAll')
 
     if item_tags_include_all or order_tags_include_all:
-        return r.get('res_%s' % str(request.args))
+        response = r.get('res_%s' % str(request.args))
+        if response:
+            return response
 
     if item_tags_include_all:
         like_tags = [Item.tags.like('%' + tag + '%') for tag in item_tags_include_all.split(',')]
