@@ -1,20 +1,11 @@
-from flask import jsonify, current_app, request
-from flask.ext.sqlalchemy import get_debug_queries
+from flask import jsonify, request
 from sqlalchemy import or_
+import redis
 
-from . import app, db
+from . import app
 from .models import User, Item, Order
 
-
-#@app.after_request
-#def after_request(response):
-#    for query in get_debug_queries():
-#        if query.duration >= current_app.config['SLOW_DB_QUERY_TIME']:
-#            current_app.logger.warning(
-#                'Slow query: %s\nParameters: %s\nDuration: %fs\nContext: %s\n'
-#                % (query.statement, query.parameters, query.duration,
-#                   query.context))
-#    return response
+r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 
 @app.route('/searchOrder')
@@ -29,12 +20,11 @@ def get_order():
     quantity_gte = request.args.get('findByOrderQuantityGTE')
     quantity_lte = request.args.get('findByOrderQuantityLTE')
     order_state = request.args.get('findByOrderState')
-    order_tags_include_all = request.args.get('findByOrderTagsIncludeAll')
     order_tags_include_any = request.args.get('findByOrderTagsIncludeAny')
 
     if filter(None, (date_time_gte, date_time_lte, order_user_id,
                      order_item_id, quantity_gte, quantity_lte, order_state,
-                     order_tags_include_all, order_tags_include_any)):
+                     order_tags_include_any)):
 
         if date_time_gte and date_time_lte:
             order_query = order_query.filter(Order.order_date_time.between(int(date_time_gte), int(date_time_lte)))
@@ -60,10 +50,6 @@ def get_order():
 
         if order_state:
             order_query = order_query.filter(Order.order_state == order_state)
-
-        if order_tags_include_all:
-            like_tags = [Order.tags.like('%' + tag + '%') for tag in order_tags_include_all.split(',')]
-            order_query = order_query.filter(*like_tags)
 
         if order_tags_include_any:
             like_tags = [Order.tags.like('%' + tag + '%') for tag in order_tags_include_any.split(',')]
@@ -93,13 +79,11 @@ def get_order():
     item_stock_quantity_lte = request.args.get('findByItemStockQuantityLTE')
     item_base_price_gte = request.args.get('findByItemBasePriceGTE')
     item_base_price_lte = request.args.get('findByItemBasePriceLTE')
-    item_tags_include_all = request.args.get('findByItemTagsIncludeAll')
     item_tags_include_any = request.args.get('findByItemTagsIncludeAny')
 
     if filter(None, (item_supplier, item_stock_quantity_gte,
                      item_stock_quantity_lte, item_base_price_gte,
-                     item_stock_quantity_lte, item_tags_include_all,
-                     item_tags_include_any)):
+                     item_stock_quantity_lte, item_tags_include_any)):
         order_query = order_query.join(Item)
 
         if item_supplier:
@@ -119,20 +103,33 @@ def get_order():
         elif item_base_price_lte:
             order_query = order_query.filter(Item.item_base_price <= int(item_base_price_lte))
 
-        if item_tags_include_all:
-            like_tags = [Item.tags.like('%' + tag + '%') for tag in item_tags_include_all.split(',')]
-            order_query = order_query.filter(*like_tags)
-
         if item_tags_include_any:
             like_tags = [Item.tags.like('%' + tag + '%') for tag in item_tags_include_any.split(',')]
             order_query = order_query.filter(or_(*like_tags))
+
+    order_tags_include_all = request.args.get('findByOrderTagsIncludeAll')
+    item_tags_include_all = request.args.get('findByItemTagsIncludeAll')
+
+    if item_tags_include_all or order_tags_include_all:
+        return r.get('res_%s' % str(request.args))
+
+    if item_tags_include_all:
+        like_tags = [Item.tags.like('%' + tag + '%') for tag in item_tags_include_all.split(',')]
+        order_query = order_query.filter(*like_tags)
+
+    if order_tags_include_all:
+        like_tags = [Order.tags.like('%' + tag + '%') for tag in order_tags_include_all.split(',')]
+        order_query = order_query.filter(*like_tags)
 
     limit = request.args.get('limit')
     if limit:
         order_query = order_query.limit(int(limit))
 
-    orders = order_query.all()
-    return jsonify(result=True, data=[o.serialize for o in orders])
+    response = jsonify(result=True, data=[o.serialize for o in order_query.all()])
+
+    if item_tags_include_all or order_tags_include_all:
+        r.set('res_%s' % str(request.args), response)
+    return response
 
 
 @app.route('/')
