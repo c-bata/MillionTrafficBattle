@@ -66,8 +66,8 @@ def get_order():
 
     # senario 2
     user_company = request.args.get('findByUserCompany')
-    discount_rate_gte = request.args.get('findByDisCountRateGTE')
-    discount_rate_lte = request.args.get('findByDisCountRateLTE')
+    discount_rate_gte = request.args.get('findByUserDisCountRateGTE')
+    discount_rate_lte = request.args.get('findByUserDisCountRateLTE')
 
     if filter(None, (user_company, discount_rate_lte, discount_rate_gte)):
         order_query = order_query.join(User)
