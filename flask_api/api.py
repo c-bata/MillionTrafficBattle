@@ -124,8 +124,7 @@ def get_order():
         order_query = order_query.limit(int(limit))
 
     orders = order_query.all()
-    return jsonify(result=(len(orders) != 0),
-                   data=[o.serialize for o in orders])
+    return jsonify(result=True, data=[o.serialize for o in orders])
 
 
 @app.route('/')
