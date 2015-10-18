@@ -5,7 +5,7 @@ import redis
 from . import app
 from .models import User, Item, Order
 
-r = redis.StrictRedis(host='localhost', port=6379, db=0)
+r = redis.Redis(unix_socket_path='/tmp/redis.sock')
 
 
 @app.route('/searchOrder')
