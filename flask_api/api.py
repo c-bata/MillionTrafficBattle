@@ -35,12 +35,14 @@ def get_order():
     if filter(None, (date_time_gte, date_time_lte, order_user_id,
                      order_item_id, quantity_gte, quantity_lte, order_state,
                      order_tags_include_all, order_tags_include_any)):
-        if date_time_gte:
+
+        if date_time_gte and date_time_lte:
+            order_query = order_query.filter(Order.order_date_time.between(int(date_time_gte), int(date_time_lte)))
+        elif date_time_gte:
             if len(request.args) == 1:
                 return jsonify(result=True, data=[])
             order_query = order_query.filter(Order.order_date_time >= int(date_time_gte))
-
-        if date_time_lte:
+        elif date_time_lte:
             order_query = order_query.filter(Order.order_date_time <= int(date_time_lte))
 
         if order_user_id:
@@ -49,10 +51,11 @@ def get_order():
         if order_item_id:
             order_query = order_query.filter(Order.order_item_id == order_item_id)
 
-        if quantity_gte:
+        if quantity_gte and quantity_lte:
+            order_query = order_query.filter(Order.order_quantity.between(int(quantity_gte), int(quantity_lte)))
+        elif quantity_gte:
             order_query = order_query.filter(Order.order_quantity >= int(quantity_gte))
-
-        if quantity_lte:
+        elif quantity_lte:
             order_query = order_query.filter(Order.order_quantity <= int(quantity_lte))
 
         if order_state:
@@ -77,10 +80,11 @@ def get_order():
         if user_company:
             order_query = order_query.filter(User.user_company == user_company)
 
-        if user_discount_rate_gte:
+        if user_discount_rate_gte and user_discount_rate_lte:
+            order_query = order_query.filter(User.user_discount_rate.between(int(user_discount_rate_gte), int(user_discount_rate_lte)))
+        elif user_discount_rate_gte:
             order_query = order_query.filter(User.user_discount_rate >= int(user_discount_rate_gte))
-
-        if user_discount_rate_lte:
+        elif user_discount_rate_lte:
             order_query = order_query.filter(User.user_discount_rate <= int(user_discount_rate_lte))
 
     # senario 3
@@ -101,16 +105,18 @@ def get_order():
         if item_supplier:
             order_query = order_query.filter(Item.item_supplier == item_supplier)
 
-        if item_stock_quantity_gte:
+        if item_stock_quantity_gte and item_stock_quantity_lte:
+            order_query = order_query.filter(Item.item_stock_quantity.between(int(item_stock_quantity_gte), int(item_stock_quantity_lte)))
+        elif item_stock_quantity_gte:
             order_query = order_query.filter(Item.item_stock_quantity >= int(item_stock_quantity_gte))
-
-        if item_stock_quantity_lte:
+        elif item_stock_quantity_lte:
             order_query = order_query.filter(Item.item_stock_quantity <= int(item_stock_quantity_lte))
 
-        if item_base_price_gte:
+        if item_base_price_gte and item_base_price_lte:
+            order_query = order_query.filter(Item.item_base_price.between(int(item_base_price_gte), int(item_base_price_lte)))
+        elif item_base_price_gte:
             order_query = order_query.filter(Item.item_base_price >= int(item_base_price_gte))
-
-        if item_base_price_lte:
+        elif item_base_price_lte:
             order_query = order_query.filter(Item.item_base_price <= int(item_base_price_lte))
 
         if item_tags_include_all:
