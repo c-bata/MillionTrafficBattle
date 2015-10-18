@@ -29,8 +29,6 @@ def get_order():
         if date_time_gte and date_time_lte:
             order_query = order_query.filter(Order.order_date_time.between(int(date_time_gte), int(date_time_lte)))
         elif date_time_gte:
-            if len(request.args) == 1:
-                return jsonify(result=True, data=[])
             order_query = order_query.filter(Order.order_date_time >= int(date_time_gte))
         elif date_time_lte:
             order_query = order_query.filter(Order.order_date_time <= int(date_time_lte))
@@ -126,6 +124,8 @@ def get_order():
     limit = request.args.get('limit')
     if limit:
         order_query = order_query.limit(int(limit))
+    else:
+        order_query = order_query.limit(100)
 
     response = jsonify(result=True, data=[o.serialize for o in order_query.all()])
 
