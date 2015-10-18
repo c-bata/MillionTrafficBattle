@@ -66,20 +66,20 @@ def get_order():
 
     # senario 2
     user_company = request.args.get('findByUserCompany')
-    discount_rate_gte = request.args.get('findByUserDisCountRateGTE')
-    discount_rate_lte = request.args.get('findByUserDisCountRateLTE')
+    user_discount_rate_gte = request.args.get('findByUserDiscountRateGTE')
+    user_discount_rate_lte = request.args.get('findByUserDiscountRateLTE')
 
-    if filter(None, (user_company, discount_rate_lte, discount_rate_gte)):
+    if filter(None, (user_company, user_discount_rate_lte, user_discount_rate_gte)):
         order_query = order_query.join(User)
 
         if user_company:
             order_query = order_query.filter(User.user_company == user_company)
 
-        if discount_rate_gte:
-            order_query = order_query.filter(User.user_discount_rate >= int(discount_rate_gte))
+        if user_discount_rate_gte:
+            order_query = order_query.filter(User.user_discount_rate >= int(user_discount_rate_gte))
 
-        if discount_rate_lte:
-            order_query = order_query.filter(User.user_discount_rate <= int(discount_rate_lte))
+        if user_discount_rate_lte:
+            order_query = order_query.filter(User.user_discount_rate <= int(user_discount_rate_lte))
 
     # senario 3
     item_supplier = request.args.get('findByItemSupplier')
