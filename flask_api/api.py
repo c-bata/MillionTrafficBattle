@@ -36,6 +36,8 @@ def get_order():
                      order_item_id, quantity_gte, quantity_lte, order_state,
                      order_tags_include_all, order_tags_include_any)):
         if date_time_gte:
+            if len(request.args) == 1:
+                return jsonify(result=True, data=[])
             order_query = order_query.filter(Order.order_date_time >= int(date_time_gte))
 
         if date_time_lte:
